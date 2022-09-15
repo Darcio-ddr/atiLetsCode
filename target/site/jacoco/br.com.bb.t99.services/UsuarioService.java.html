@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UsuarioService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">t99-curso-nuvem-f2281749</a> &gt; <a href="index.source.html" class="el_package">br.com.bb.t99.services</a> &gt; <span class="el_source">UsuarioService.java</span></div><h1>UsuarioService.java</h1><pre class="source lang-java linenums">package br.com.bb.t99.services;
+
+import br.com.bb.t99.dao.UsuarioDao;
+import br.com.bb.t99.dao.UsuarioDao;
+import br.com.bb.dev.ext.exceptions.ErroNegocialException;
+import br.com.bb.t99.exceptions.ChavesMonitoradasSistema;
+import br.com.bb.t99.exceptions.ErrosSistema;
+import br.com.bb.t99.exceptions.ErroSqlException;
+import br.com.bb.t99.models.Usuario;
+import io.opentracing.Tracer;
+import org.eclipse.microprofile.opentracing.Traced;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.ZoneId;
+
+@RequestScoped
+@Traced
+<span class="fc" id="L21">public class UsuarioService {</span>
+
+<span class="fc" id="L23">    private static final Integer IDADE_MINIMA_PARA_MAIORIDADE = 18;</span>
+    private static final String TAG_TRACE_ERRO = &quot;erro&quot;;
+    private static final String TAG_TRACE_USUARIO = &quot;usuario&quot;;
+    private static final String ZONE_UTC = &quot;UTC&quot;;
+
+    @Inject
+    UsuarioDao dao;
+
+    @Inject
+    Tracer configuredTracer;
+
+    private void validarUsuario(Usuario usuario) throws ErroNegocialException {
+
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">        if(usuario.getNascimento() == null){</span>
+<span class="nc" id="L37">            addTracerTag(TAG_TRACE_ERRO, ErrosSistema.INFORME_DATA_NASCIMENTO.toString());</span>
+<span class="nc" id="L38">            addTracerTag(TAG_TRACE_USUARIO, usuario.toString());</span>
+<span class="nc" id="L39">            throw new ErroNegocialException(ErrosSistema.INFORME_DATA_NASCIMENTO.get());</span>
+        }
+
+<span class="fc" id="L42">        LocalDate dataAtual = LocalDate.now();</span>
+<span class="fc" id="L43">        int idade = dataAtual.getYear() - usuario.getNascimento().toInstant().atZone(ZoneId.of(ZONE_UTC)).getYear();</span>
+
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        if( idade &lt; IDADE_MINIMA_PARA_MAIORIDADE){</span>
+<span class="fc" id="L46">            addTracerTag(TAG_TRACE_ERRO, ErrosSistema.ERRO_INCLUSAO_USUARIO.toString());</span>
+<span class="fc" id="L47">            addTracerTag(TAG_TRACE_USUARIO, usuario.toString());</span>
+<span class="fc" id="L48">            throw new ErroNegocialException(ErrosSistema.ERRO_INCLUSAO_USUARIO.get().addVariavel(</span>
+<span class="fc" id="L49">                ChavesMonitoradasSistema.IDADE.get(),IDADE_MINIMA_PARA_MAIORIDADE.toString()));        }</span>
+<span class="fc" id="L50">    }</span>
+
+    private void addTracerTag(String nomeTag, String valorTag){
+<span class="pc bpc" id="L53" title="1 of 4 branches missed.">        if(configuredTracer != null &amp;&amp; configuredTracer.activeSpan() != null) {</span>
+<span class="fc" id="L54">            configuredTracer.activeSpan().setTag(TAG_TRACE_USUARIO, valorTag);</span>
+        }
+<span class="fc" id="L56">    }</span>
+
+    @Transactional(rollbackOn = Exception.class)
+    public int inserirUsuario(Usuario usuario) throws ErroNegocialException, ErroSqlException {
+<span class="fc" id="L60">        validarUsuario(usuario);</span>
+<span class="fc" id="L61">        return dao.inserirUsuario(usuario);</span>
+    }
+
+    @Transactional(rollbackOn = Exception.class)
+    public int atualizarUsuario(long id, Usuario usuario) throws ErroNegocialException {
+<span class="nc" id="L66">        usuario.setId(id);</span>
+<span class="nc" id="L67">        validarUsuario(usuario);</span>
+<span class="nc" id="L68">        return dao.atualizarUsuario(usuario);</span>
+    }
+
+    @Transactional(rollbackOn = Exception.class)
+    public int excluirUsuario(Long id) throws ErroNegocialException, ErroSqlException {
+        // Exemplo de regra para lancar exceção
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        if(id == 1){</span>
+<span class="nc" id="L75">            throw new ErroNegocialException(ErrosSistema.ERRO_EXCLUSAO_USUARIO.get().addVariavel(</span>
+<span class="nc" id="L76">                ChavesMonitoradasSistema.CPF.get(), id.toString()));</span>
+        }
+
+<span class="nc" id="L79">        return dao.excluirUsuario(id);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

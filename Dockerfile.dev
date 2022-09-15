@@ -1,0 +1,9 @@
+FROM atf.intranet.bb.com.br:5001/bb/mvn/mvn-java11-maven36:3.6.3
+
+ENV MVNW_VERBOSE=true
+
+ENV AB_ENABLED=jmx_exporter
+
+WORKDIR /app
+
+CMD ["mvn","compile","quarkus:dev"]

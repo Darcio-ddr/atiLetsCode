@@ -1,0 +1,130 @@
+version: "3.4"
+services:
+
+  t99-curso-nuvem-f2281749:
+    container_name: t99-curso-nuvem-f2281749
+    image: t99-curso-nuvem-f2281749:latest
+    # se estiver rodando docker em windows, comentar com # a linha abaixo, do parametro user:
+    user: "${myUID}:${myGroup}"
+    build:
+      context: ../
+      dockerfile: ./Dockerfile.dev
+    environment:
+      # Opção para jmx debug
+      - JAVA_JMX_DEBUG=-Djava.rmi.server.hostname=0.0.0.0 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=8999 -Dcom.sun.management.jmxremote.rmi.port=8999 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false
+      # Configuracao do LOG
+      - QUARKUS_LOG_CONSOLE_ENABLE=true
+      - QUARKUS_LOG_CONSOLE_LEVEL=DEBUG
+      # Exibir no log as queries executadas nao utilize no ambiente de produção
+      - QUARKUS_HIBERNATE_ORM_LOG_SQL=true
+      # Roteiro: https://fontes.intranet.bb.com.br/dev/publico/roteiros/-/blob/master/db2/UsandoDb2EmProjetoJavaQuarkus.md
+      # Comente as 4 linhas abaixo que comecam com QUARKUS_DATASOURCE para desativar o uso do H2 para
+      # desenvolvimento, ele ainda estara ativo para execução dos testes conforme as configuracoes
+      # no application.properties com as propriedades que comecam com %test.quarkus
+      # Linha 1     - String da conexao de banco com inicializacao de um script localizado na pasta resources/scripts
+      # Linha 2 e 3 - Usuario e senha de acesso usando o padrao do H2
+      # Linha 4     - Configuracao do Quarkus para o tipo de banco ira sobreescrever as propriedade
+      # presente no application.properties.
+      - QUARKUS_DATASOURCE_JDBC_DRIVER=org.h2.Driver
+      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:h2:mem:exemplo;INIT=RUNSCRIPT FROM 'classpath:scripts/carga_testes.sql'
+      - QUARKUS_DATASOURCE_USERNAME=sa
+      - QUARKUS_DATASOURCE_PASSWORD=sa
+      - QUARKUS_DATASOURCE_DB_KIND=h2
+      # Descomente as 6 linhas abaixo que comecem com - para testar usando o Oracle de desenvolvimento.
+      # Linha 1     - String da conexao de banco, e o endereço para acessar o banco de dados
+      # Linha 2 e 3 - Usuario e senha de acesso, aqui fica como enviroment para evitar de subir no repositorio
+      #               ela fica salva no arquivo .env localizado na raiz do projeto, ele não sera comitado
+      # * Configuracao do Quarkus para o tipo de banco e do driver e do dialeto estão
+      #   configurados no aplication.properties do seu projeto
+      #- QUARKUS_DATASOURCE_JDBC_URL=jdbc:oracle:thin:@exa01-scan.desenv.bb.com.br:1521/nome_do_seu_esquema
+      #- QUARKUS_DATASOURCE_USERNAME=$DB_USER
+      #- QUARKUS_DATASOURCE_PASSWORD=$DB_PASSWORD
+      # OPENTRACING - JAEGER
+      - QUARKUS_JAEGER_SERVICE_NAME=t99-curso-nuvem-f2281749
+      - QUARKUS_JAEGER_SAMPLER_TYPE=const
+      - QUARKUS_JAEGER_SAMPLER_PARAM=1
+      - QUARKUS_JAEGER_AGENT_HOST_PORT=jaeger
+      # Configuracao do Maven(m2) para executar no docker compose, usar apenas em desenv local.
+      - REPO_LOCAL=/temp/.m2/repository
+      - ATF_USER=$ATF_USER
+      - ATF_TOKEN=$ATF_TOKEN
+      - BR_COM_BB_T99_INTEGRATION_INTERFACECONSUMIDOR_MP_REST_URL=http://iib-curio:8081
+    volumes:
+      - $HOME/.m2/repository:/temp/.m2/repository
+      - $PWD:/app
+     # se estiver rodando docker em windows, comentar com # as duas linhas acima e descomentar as duas linhas abaixo:
+     # - ${HOME}\\.m2\repository:/temp/.m2/repository
+     # - ${PWD}:/app
+    networks:
+      - t99-curso-nuvem-f2281749-net
+    ports:
+      - "8080:8080" # Server
+      - "5005:5005" # DEBUG Não uilizar nos ambientes de producao/homologacao
+      - "8999:8999" # DEBUG JMX Não utilizar nos ambientes de producao/homologacao
+  # =============================================================================
+  #   Sidecar CURIO Utilizado para realizar a comunicação entre IIB e aplicação
+  # =============================================================================
+  iib-curio:
+    container_name: iib-curio
+    image: atf.intranet.bb.com.br:5001/bb/iib/iib-curio:0.5.7
+    #se windows, alterar abaixo as portas 8081 e também na variável KUMULUZEE_SERVER_HTTP_PORT para 8090 por exemplo
+    #pois a porta 8081 no windows pode já estar ocupada por outros serviços
+    ports:
+      - "8081:8081"
+    environment:
+      - KUMULUZEE_SERVER_HTTP_PORT=8081
+      - KUMULUZEE_ENV_NAME=dev
+      - CURIO_CACHE_CONFIGURACAO_IIB=iib-slave.redis.bdh.desenv.bb.com.br
+      - CURIO_CACHE_CONFIGURACAO_IIB_ID=iib:configuracao:k8s-integracao
+      - CURIO_SIGLA_APLICACAO=t99
+      - CURIO_APLICACAO_HOST=http://t99-curso-nuvem-f2281749:8080
+      - CURIO_IIB_LOG_LEVEL=FINE
+      - CURIO_DRY_RUN=false
+      - CURIO_MODO_DESENVOLVIMENTO=true
+      - KUMULUZEE_LOGS_LOGGERS0_NAME=br.com.bb
+      - KUMULUZEE_LOGS_LOGGERS0_LEVEL=TRACE
+      - CURIO_OP_PROVEDOR=br.com.bb.t99.operacao:Op5207120-v1:2.2.0-SNAPSHOT
+      - CURIO_OP_CONSUMIDOR=br.com.bb.rta.operacao:Op2805211-v1:1.3.0
+      # - CURIO_OP_CONSUMIDOR=
+    networks:
+      - t99-curso-nuvem-f2281749-net
+  # =====================================================================================
+  #   Imagens para executar localmente, elas ja estarão disponiveis para seu namespace
+  # =====================================================================================
+  jaeger:
+    image: jaegertracing/all-in-one
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=9411
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "9411:9411"
+    networks:
+      - t99-curso-nuvem-f2281749-net
+volumes:
+  maven-repo:
+  # ====================================================================================
+  #    Configuração da rede do docker para este microservico
+  #    Default: 192.168.203.192/27
+  #    Caso você já tenha subido outro microservico nesta rede, você pode executar outras
+  #  usando um dos enderecos a seguir:
+  #    - 192.168.203.224/27
+  #    Neste caso não se esqueça de mudar os mapeamentos das portas para o localhost para
+  #  que não haja conflito, conforme exemplo abaixo:
+  #    Microservico 1:
+  #       ports:
+  #         - "8080:8080" (porta 8080 do localhost vai mapear a 8080 do microservico)
+  #    Microservico 2:
+  #       ports:
+  #         - "8081:8080" (porta 8081 do localhost vai mapear a 8080 do microservico)
+  # ====================================================================================
+networks:
+  t99-curso-nuvem-f2281749-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.203.192/27

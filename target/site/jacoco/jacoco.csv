@@ -1,0 +1,12 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+t99-curso-nuvem-f2281749,br.com.bb.t99.dao,UsuarioDao,89,37,0,0,32,9,4,3,4,3
+t99-curso-nuvem-f2281749,br.com.bb.t99.rest,UsuarioResource,41,11,0,0,4,2,4,2,4,2
+t99-curso-nuvem-f2281749,br.com.bb.t99.rest,Op2805211v1,10,0,0,0,3,0,2,0,2,0
+t99-curso-nuvem-f2281749,br.com.bb.t99.rest,HelloWorldResources,3,41,2,2,2,9,2,2,0,2
+t99-curso-nuvem-f2281749,br.com.bb.t99.rest,Op5207120v1,37,84,5,5,8,21,5,4,0,4
+t99-curso-nuvem-f2281749,br.com.bb.t99.services,UsuarioService,49,72,4,6,10,16,5,7,2,5
+t99-curso-nuvem-f2281749,br.com.bb.t99.models,Usuario,22,35,0,0,9,12,6,4,6,4
+t99-curso-nuvem-f2281749,br.com.bb.t99.exceptions,ErroSqlException,102,0,12,0,24,0,8,0,2,0
+t99-curso-nuvem-f2281749,br.com.bb.t99.exceptions,ErrosSistema,0,145,0,0,0,17,0,4,0,4
+t99-curso-nuvem-f2281749,br.com.bb.t99.exceptions,ChavesMonitoradasSistema,0,103,0,0,0,12,0,3,0,3
+t99-curso-nuvem-f2281749,br.com.bb.t99.config,AppConfig,3,0,0,0,1,0,1,0,1,0

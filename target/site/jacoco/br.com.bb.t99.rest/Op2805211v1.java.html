@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Op2805211v1.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">t99-curso-nuvem-f2281749</a> &gt; <a href="index.source.html" class="el_package">br.com.bb.t99.rest</a> &gt; <span class="el_source">Op2805211v1.java</span></div><h1>Op2805211v1.java</h1><pre class="source lang-java linenums">package br.com.bb.t99.rest;
+
+import javax.enterprise.context.RequestScoped;
+
+import javax.inject.Inject;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+
+import javax.ws.rs.core.MediaType;
+
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+import org.eclipse.microprofile.opentracing.Traced;
+
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+import br.com.bb.dev.ext.exceptions.ErroNegocialException;
+
+import br.com.bb.rta.operacao.listarItensFinanciadosSistemasProducaoV1.bean.requisicao.DadosRequisicaoListarItensFinanciadosSistemasProducao;
+import br.com.bb.rta.operacao.listarItensFinanciadosSistemasProducaoV1.bean.resposta.DadosRespostaListarItensFinanciadosSistemasProducao;
+
+import br.com.bb.t99.integration.InterfaceConsumidor;
+
+@Consumes(MediaType.APPLICATION_JSON + &quot;;charset=utf-8&quot;)
+@Produces(MediaType.APPLICATION_JSON + &quot;;charset=utf-8&quot;)
+@Path(&quot;/Op2805211v1&quot;)
+@Traced
+@RequestScoped
+<span class="nc" id="L35">public class Op2805211v1 {</span>
+
+   @Inject
+   @RestClient
+   InterfaceConsumidor sidecarConsumidor;
+   @POST
+   // Anotações para documentação no Swagger
+   @Operation(summary = &quot;ConsultarOperações&quot;, description = &quot;Descricao da sua operação: ConsultarOperações&quot;)
+   @APIResponse(responseCode = &quot;200&quot;, description = &quot;DadosRespostaPesquisarOperacao&quot;,
+   content = { @Content(mediaType = &quot;application/json&quot;,
+   schema = @Schema(implementation = DadosRespostaListarItensFinanciadosSistemasProducao.class))})
+   public DadosRespostaListarItensFinanciadosSistemasProducao consumir(DadosRequisicaoListarItensFinanciadosSistemasProducao requisicao) throws ErroNegocialException {
+
+<span class="nc" id="L48">      DadosRespostaListarItensFinanciadosSistemasProducao resposta = sidecarConsumidor.executarOperacao(requisicao);</span>
+<span class="nc" id="L49">      return resposta;</span>
+
+   }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

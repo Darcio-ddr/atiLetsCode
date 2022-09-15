@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Op5207120v1.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">t99-curso-nuvem-f2281749</a> &gt; <a href="index.source.html" class="el_package">br.com.bb.t99.rest</a> &gt; <span class="el_source">Op5207120v1.java</span></div><h1>Op5207120v1.java</h1><pre class="source lang-java linenums">package br.com.bb.t99.rest;
+
+import br.com.bb.t99.operacao.cadastrarClienteV1.bean.requisicao.DadosRequisicaoCadastrarCliente;
+import br.com.bb.t99.operacao.cadastrarClienteV1.bean.resposta.DadosRespostaCadastrarCliente;
+
+import br.com.bb.t99.exceptions.ErrosSistema;
+import br.com.bb.t99.exceptions.ChavesMonitoradasSistema;
+import br.com.bb.dev.ext.exceptions.ErroNegocialException;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.opentracing.Traced;
+
+import javax.enterprise.context.RequestScoped;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.inject.Inject;
+import br.com.bb.t99.services.UsuarioService;
+import br.com.bb.t99.models.Usuario;
+
+@Consumes(MediaType.APPLICATION_JSON + &quot;;charset=utf-8&quot;)
+@Produces(MediaType.APPLICATION_JSON + &quot;;charset=utf-8&quot;)
+@Path(&quot;/op5207120v1&quot;)
+@Traced
+@RequestScoped
+<span class="fc" id="L34">public class Op5207120v1 {</span>
+
+    @Inject
+    UsuarioService usuarioService;
+
+    @POST
+    // Anotações para documentação no Swagger
+    @Operation(summary = &quot;CadastrarCliente&quot;, description = &quot;Descricao da sua operação: CadastrarCliente&quot;)
+    @APIResponse(responseCode = &quot;200&quot;, description = &quot;DadosRespostaCadastrarCliente&quot;, content = {
+            @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = DadosRespostaCadastrarCliente.class)) })
+    public DadosRespostaCadastrarCliente servir(DadosRequisicaoCadastrarCliente requisicao)
+            throws ErroNegocialException {
+
+<span class="fc" id="L47">        validarEntrada(requisicao);</span>
+
+<span class="fc" id="L49">        DadosRespostaCadastrarCliente resposta = tratarRequisicao(requisicao);</span>
+
+<span class="fc" id="L51">        return resposta;</span>
+    }
+
+    private void validarEntrada(DadosRequisicaoCadastrarCliente requisicao) throws ErroNegocialException {
+
+        // TODO Inclua aqui as validações dos campos de entrada da sua operação. Segue
+        // exemplo para operacao de echo
+        // if(requisicao.getTextoDado().equals(&quot;&quot;)){
+        // throw new ErroNegocialException(ErrosSistema.ERRO_SISTEMA.get().addVariavel(
+        // ChavesMonitoradasSistema.MINHA_CHAVE.get(), &quot;conteudo variavel monitorada&quot;
+        // ));
+        // }
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        if (requisicao.getCodigoCliente() == 0) {</span>
+<span class="nc" id="L64">            throw new ErroNegocialException(ErrosSistema.TEXTO_ENTRADA_NAO_INFORMADO.get().addVariavel(</span>
+<span class="nc" id="L65">                    ChavesMonitoradasSistema.CODIGO_CLIENTE.get(), Long.toString(requisicao.getCodigoCliente())));</span>
+        }
+
+<span class="pc bpc" id="L68" title="2 of 4 branches missed.">        if (requisicao.getNomeCliente().isEmpty() || requisicao.getNomeCliente() == null) {</span>
+<span class="nc" id="L69">            throw new ErroNegocialException(ErrosSistema.TEXTO_ENTRADA_NAO_INFORMADO.get().addVariavel(</span>
+<span class="nc" id="L70">                    ChavesMonitoradasSistema.NOME.get(), requisicao.getNomeCliente()));</span>
+        }
+
+<span class="pc bpc" id="L73" title="2 of 4 branches missed.">        if (requisicao.getDataNascimento().isEmpty() || requisicao.getDataNascimento() == null) {</span>
+<span class="nc" id="L74">            throw new ErroNegocialException(ErrosSistema.TEXTO_ENTRADA_NAO_INFORMADO.get().addVariavel(</span>
+<span class="nc" id="L75">                    ChavesMonitoradasSistema.DATA_NASCIMENTO.get(), requisicao.getDataNascimento()));</span>
+        }
+
+<span class="fc" id="L78">    }</span>
+
+    private DadosRespostaCadastrarCliente tratarRequisicao(DadosRequisicaoCadastrarCliente requisicao)
+            throws ErroNegocialException {
+
+        // DadosRespostaCadastrarCliente resposta = new DadosRespostaCadastrarCliente();
+
+        // TODO Inclua aqui a logica de negocio da sua operação. Segue exemplo para
+        // operacao de echo
+        // resposta.setTextoDado(requisicao.getTextoDado());
+
+        // return resposta;
+        // Converter data de nascimento
+<span class="fc" id="L91">        SimpleDateFormat sd = new SimpleDateFormat(&quot;dd.MM.yyyy&quot;);</span>
+<span class="fc" id="L92">        Date data = new Date();</span>
+
+        try {
+<span class="fc" id="L95">            data = sd.parse(requisicao.getDataNascimento());</span>
+<span class="nc" id="L96">        } catch (ParseException e) {</span>
+<span class="nc" id="L97">            e.printStackTrace();</span>
+<span class="fc" id="L98">        }</span>
+
+        // Instanciar novo usuario e atribuir propriedades da requisição
+<span class="fc" id="L101">        Usuario usuarioNovo = new Usuario(</span>
+<span class="fc" id="L102">                requisicao.getCodigoCliente(),</span>
+<span class="fc" id="L103">                requisicao.getNomeCliente(),</span>
+                data);
+
+        // Inserir usuario no banco de dados e receber ID
+<span class="fc" id="L107">        usuarioService.inserirUsuario(usuarioNovo);</span>
+
+        // Instanciar resposta e atribuir propriedades, com conversão da data de
+        // nascimento
+<span class="fc" id="L111">        DadosRespostaCadastrarCliente resposta = new DadosRespostaCadastrarCliente();</span>
+<span class="fc" id="L112">        resposta.setCodigoCliente(usuarioNovo.getId());</span>
+<span class="fc" id="L113">        resposta.setDataNascimento(new SimpleDateFormat(&quot;dd.MM.yyyy&quot;).format(usuarioNovo.getNascimento()));</span>
+<span class="fc" id="L114">        resposta.setNomeCliente(usuarioNovo.getNome());</span>
+<span class="fc" id="L115">        return resposta;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,9 @@
+*
+!target/*-runner
+!target/*-runner.jar
+!target/lib/*
+!src/main/resources/scripts/*.sql
+!mvnw
+!pom.xml
+!src/*
+!.mvn/*

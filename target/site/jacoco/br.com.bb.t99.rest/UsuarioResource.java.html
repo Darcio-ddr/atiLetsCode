@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UsuarioResource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">t99-curso-nuvem-f2281749</a> &gt; <a href="index.source.html" class="el_package">br.com.bb.t99.rest</a> &gt; <span class="el_source">UsuarioResource.java</span></div><h1>UsuarioResource.java</h1><pre class="source lang-java linenums">package br.com.bb.t99.rest;
+
+import br.com.bb.t99.dao.UsuarioDao;
+import br.com.bb.t99.models.Usuario;
+import br.com.bb.t99.services.UsuarioService;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.opentracing.Traced;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+@RequestScoped
+@Path(&quot;/v1/usuarios&quot;)
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+@Traced
+<span class="fc" id="L31">public class UsuarioResource {</span>
+
+    @Inject
+    UsuarioService service;
+
+    @Inject
+    UsuarioDao dao;
+
+    @GET
+    @Path(&quot;/{id}&quot;)
+    @Operation(summary = &quot;Busca Usuario por ID&quot;,
+            description = &quot;Retorna um usuario&quot;)
+    @APIResponse(
+            responseCode = &quot;200&quot;,
+            description = &quot;Usuario&quot;,
+            content = { @Content(mediaType = &quot;application/json&quot;,
+                    schema = @Schema(implementation = Usuario.class))})
+    public Response obtemUsuarioPorId(final @PathParam(&quot;id&quot;) long id) throws Exception {
+<span class="nc" id="L49">        return  Response.status(Response.Status.OK).entity(dao.buscarUsuario(id)).build();</span>
+    }
+
+    @GET
+    @Operation(summary = &quot;Listar Usuarios &quot;,
+            description = &quot;Retorna uma lista de usuario&quot;)
+    @APIResponse(
+            responseCode = &quot;200&quot;,
+            description = &quot;Usuario&quot;,
+            content = { @Content(mediaType = &quot;application/json&quot;,
+                    schema = @Schema(implementation = Usuario.class, type = SchemaType.ARRAY))})
+    public Response obtemUsuarios() throws Exception  {
+<span class="fc" id="L61">        return Response.status(Response.Status.OK).entity(dao.buscaUsuarios()).build();</span>
+    }
+
+    @POST
+    @Operation(summary = &quot;Incluir um usuario.&quot;,
+            description = &quot;Incluir um usuario&quot;)
+    @APIResponse(
+            responseCode = &quot;201&quot;,
+            description = &quot;Usuario&quot;,
+            content = { @Content(mediaType = &quot;application/json&quot;,
+                    schema = @Schema(implementation = Usuario.class))})
+    public Response inserirUsuario(Usuario usuario) throws Exception {
+<span class="nc" id="L73">        return  Response.status(Response.Status.CREATED).entity(service.inserirUsuario(usuario)).build();</span>
+    }
+
+    @DELETE
+    @Path(&quot;/{id}&quot;)
+    @Operation(summary = &quot;Remove um usuario&quot;,
+            description = &quot;Remove um usuario pelo ID informado&quot;)
+    @APIResponse(
+            responseCode = &quot;200&quot;,
+            description = &quot;Usuario&quot;,
+            content = { @Content(mediaType = &quot;application/json&quot;,
+                    schema = @Schema(implementation = Usuario.class))})
+    public Response excluirUsuario(final @PathParam(&quot;id&quot;) long id) throws Exception {
+<span class="nc" id="L86">        return  Response.status(Response.Status.OK).entity(dao.excluirUsuario(id)).build();</span>
+    }
+
+    @PUT
+    @Path(&quot;/{id}&quot;)
+    @Operation(summary = &quot;Atualizar um Usuario&quot;,
+            description = &quot;Atualização de um usuario&quot;)
+    @APIResponse(
+            responseCode = &quot;200&quot;,
+            description = &quot;Usuario&quot;,
+            content = { @Content(mediaType = &quot;application/json&quot;,
+                    schema = @Schema(implementation = Usuario.class))})
+    public Response atualizar(final @PathParam(&quot;id&quot;) long id, Usuario usuario) throws Exception {
+<span class="nc" id="L99">        return  Response.status(Response.Status.OK).entity(service.atualizarUsuario(id, usuario)).build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

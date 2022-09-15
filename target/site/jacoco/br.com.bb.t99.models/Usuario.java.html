@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Usuario.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">t99-curso-nuvem-f2281749</a> &gt; <a href="index.source.html" class="el_package">br.com.bb.t99.models</a> &gt; <span class="el_source">Usuario.java</span></div><h1>Usuario.java</h1><pre class="source lang-java linenums">package br.com.bb.t99.models;
+
+import javax.persistence.Entity;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
+import javax.persistence.Table;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import java.util.Date;
+import java.util.Optional;
+
+@Entity
+@Table(name=&quot;USUARIOS&quot;, schema=&quot;exemplo&quot;)
+@NamedNativeQueries({
+    @NamedNativeQuery(name=&quot;CONSULTAR_USUARIO&quot;, query = &quot;SELECT id, nome, nascimento from exemplo.USUARIOS&quot;, resultClass = Usuario.class),
+    @NamedNativeQuery(name=&quot;CONSULTAR_USUARIO_ID&quot;, query = &quot;SELECT id, nome, nascimento from exemplo.USUARIOS WHERE id = :idUsuario&quot;, resultClass = Usuario.class),
+    @NamedNativeQuery(name=&quot;INSERIR_USUARIO&quot;, query = &quot;INSERT INTO exemplo.USUARIOS (id, nome, nascimento) VALUES (:idUsuario, :nomeUsuario, :dataNascimento);&quot;),
+    @NamedNativeQuery(name=&quot;ATUALIZAR_USUARIO&quot;, query = &quot;UPDATE exemplo.USUARIOS SET nome = :nomeUsuario, nascimento = :dataNascimento WHERE id = :idUsuario &quot;),
+    @NamedNativeQuery(name=&quot;EXCLUIR_USUARIO&quot;, query = &quot;DELETE exemplo.USUARIOS WHERE  id = :idUsuario&quot;),
+})
+public class Usuario {
+
+<span class="fc" id="L24">    public Usuario(long id, String nome, Date nascimento) {</span>
+<span class="fc" id="L25">        this.id = id;</span>
+<span class="fc" id="L26">        this.nome = nome;</span>
+<span class="fc" id="L27">        this.nascimento = copyDate(nascimento);</span>
+<span class="fc" id="L28">    }</span>
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    private String nome;
+
+    private Date nascimento;
+
+<span class="nc" id="L38">    public Usuario() {}</span>
+
+    public long getId() {
+<span class="nc" id="L41">        return id;</span>
+    }
+
+    public void setId(long id) {
+<span class="nc" id="L45">        this.id = id;</span>
+<span class="nc" id="L46">    }</span>
+
+    public String getNome() {
+<span class="nc" id="L49">        return nome;</span>
+    }
+
+    public void setNome(String nome) {
+<span class="nc" id="L53">        this.nome = nome;</span>
+<span class="nc" id="L54">    }</span>
+
+    public Date getNascimento() {
+<span class="fc" id="L57">        return copyDate(this.nascimento);</span>
+    }
+
+    public void setNascimento(Date nascimento) {
+<span class="nc" id="L61">        this.nascimento = copyDate(nascimento);</span>
+<span class="nc" id="L62">    }</span>
+
+    private static Date copyDate(Date nascimento) {
+<span class="fc" id="L65">        return Optional</span>
+<span class="fc" id="L66">                .ofNullable(nascimento)</span>
+<span class="fc" id="L67">                .map(Date::getTime)</span>
+<span class="fc" id="L68">                .map(Date::new)</span>
+<span class="fc" id="L69">                .orElse(null);</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L74">        return &quot;Usuario{&quot; +</span>
+                &quot;id=&quot; + id +
+                &quot;, nome='&quot; + nome + '\'' +
+                &quot;, nascimento=&quot; + nascimento +
+                '}';
+    }
+
+   // @Override
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

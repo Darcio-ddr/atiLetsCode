@@ -1,0 +1,58 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/root.json",
+  "type": "object",
+  "title": "Schema Errors",
+  "required": [
+    "errors"
+  ],
+  "properties": {
+    "errors": {
+      "$id": "#/properties/errors",
+      "type": "array",
+      "title": "The Errors Schema",
+      "items": {
+        "$id": "#/properties/errors/items",
+        "type": "object",
+        "title": "The Items Schema",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "$id": "#/properties/errors/items/properties/code",
+            "type": "string",
+            "title": "The Code Schema",
+            "default": "",
+            "examples": [
+              ""
+            ],
+            "pattern": "^(.*)$"
+          },
+          "message": {
+            "$id": "#/properties/errors/items/properties/message",
+            "type": "string",
+            "title": "The Message Schema",
+            "default": "",
+            "examples": [
+              ""
+            ],
+            "pattern": "^(.*)$"
+          },
+          "moreInfo": {
+            "$id": "#/properties/errors/items/properties/moreInfo",
+            "type": "string",
+            "title": "The Moreinfo Schema",
+            "default": "",
+            "examples": [
+              ""
+            ],
+            "pattern": "^(.*)$"
+          }
+        }
+      }
+    }
+  }
+}

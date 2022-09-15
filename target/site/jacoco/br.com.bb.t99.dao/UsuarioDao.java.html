@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UsuarioDao.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">t99-curso-nuvem-f2281749</a> &gt; <a href="index.source.html" class="el_package">br.com.bb.t99.dao</a> &gt; <span class="el_source">UsuarioDao.java</span></div><h1>UsuarioDao.java</h1><pre class="source lang-java linenums">package br.com.bb.t99.dao;
+
+import br.com.bb.t99.exceptions.ErroSqlException;
+import br.com.bb.t99.models.Usuario;
+import org.eclipse.microprofile.opentracing.Traced;
+
+import javax.enterprise.context.RequestScoped;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
+
+@Traced
+@RequestScoped
+<span class="fc" id="L20">public class UsuarioDao {</span>
+
+    @PersistenceContext
+    EntityManager em;
+
+    public List&lt;Usuario&gt; buscaUsuarios() throws ErroSqlException {
+<span class="nc" id="L26">        String nameQuery = &quot;CONSULTAR_USUARIO&quot;;</span>
+
+<span class="nc" id="L28">        TypedQuery&lt;Usuario&gt; query = em</span>
+<span class="nc" id="L29">                .createNamedQuery(nameQuery, Usuario.class);</span>
+
+        try {
+<span class="nc" id="L32">            return query.getResultList();</span>
+<span class="nc" id="L33">        } catch (NoResultException e){</span>
+<span class="nc" id="L34">            return new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L35">        } catch (PersistenceException e){</span>
+<span class="nc" id="L36">            throw new ErroSqlException(e);</span>
+        }
+    }
+
+    public Usuario buscarUsuario(Long id) throws ErroSqlException {
+<span class="nc" id="L41">        String nameQuery = &quot;CONSULTAR_USUARIO_ID&quot;;</span>
+
+<span class="nc" id="L43">        TypedQuery&lt;Usuario&gt; query = em</span>
+<span class="nc" id="L44">                .createNamedQuery(nameQuery, Usuario.class);</span>
+
+<span class="nc" id="L46">        query.setParameter(&quot;idUsuario&quot;, id);</span>
+
+        try {
+<span class="nc" id="L49">            return query.getSingleResult();</span>
+<span class="nc" id="L50">        } catch (NoResultException e){</span>
+<span class="nc" id="L51">            return null;</span>
+<span class="nc" id="L52">        } catch (PersistenceException e){</span>
+<span class="nc" id="L53">            throw new ErroSqlException(e);</span>
+        }
+    }
+
+    @Transactional
+    public int inserirUsuario(Usuario usuario) throws ErroSqlException {
+<span class="fc" id="L59">        String nameQuery = &quot;INSERIR_USUARIO&quot;;</span>
+<span class="fc" id="L60">        return insertOrUpdate(usuario, nameQuery);</span>
+    }
+
+    @Transactional
+    public int excluirUsuario(long id) throws ErroSqlException {
+<span class="nc" id="L65">        String nameQuery = &quot;EXCLUIR_USUARIO&quot;;</span>
+
+<span class="nc" id="L67">        Query query = em</span>
+<span class="nc" id="L68">                .createNamedQuery(nameQuery);</span>
+
+<span class="nc" id="L70">        query.setParameter(&quot;idUsuario&quot;, id);</span>
+
+        try {
+<span class="nc" id="L73">            return query.executeUpdate();</span>
+<span class="nc" id="L74">        } catch (NoResultException e){</span>
+<span class="nc" id="L75">            return 0;</span>
+<span class="nc" id="L76">        } catch (PersistenceException e){</span>
+<span class="nc" id="L77">            throw new ErroSqlException(e);</span>
+        }
+    }
+
+    @Transactional
+    public int atualizarUsuario(Usuario usuario) throws ErroSqlException {
+<span class="nc" id="L83">        String nameQuery = &quot;ATUALIZAR_USUARIO&quot;;</span>
+<span class="nc" id="L84">        return insertOrUpdate(usuario, nameQuery);</span>
+    }
+
+    @Transactional
+    private int insertOrUpdate(Usuario usuario, String nameQuery) throws ErroSqlException {
+<span class="fc" id="L89">        Query query = em</span>
+<span class="fc" id="L90">                .createNamedQuery(nameQuery);</span>
+
+<span class="fc" id="L92">        query.setParameter(&quot;idUsuario&quot;, usuario.getId());</span>
+<span class="fc" id="L93">        query.setParameter(&quot;nomeUsuario&quot;, usuario.getNome());</span>
+<span class="fc" id="L94">        query.setParameter(&quot;dataNascimento&quot;, usuario.getNascimento());</span>
+
+        try {
+<span class="fc" id="L97">            return query.executeUpdate();</span>
+<span class="nc" id="L98">        } catch (NoResultException e) {</span>
+<span class="nc" id="L99">            return 0;</span>
+<span class="nc" id="L100">        } catch (PersistenceException e) {</span>
+<span class="nc" id="L101">            throw new ErroSqlException(e);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>
